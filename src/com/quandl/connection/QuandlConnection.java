@@ -11,6 +11,7 @@ public class QuandlConnection {
 
 	public static void main(String[] args) {
 		HttpClient client = new DefaultHttpClient();
+		//api URL
 		HttpGet request = new HttpGet("https://www.quandl.com/api/v3/datasets/NSE/VEDL.json?api_key=UXsVDnMsYhtX_qVmVVLR");
 		HttpResponse response;
 		try {
