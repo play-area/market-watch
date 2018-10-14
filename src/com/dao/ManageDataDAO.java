@@ -4,15 +4,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import com.constants.DatabaseConstants;
+import com.model.DailyCandle;
 import com.model.SymbolDTO;
 
 public class ManageDataDAO {
@@ -41,7 +44,6 @@ public class ManageDataDAO {
 		databaseProperties.put("user",prop.getProperty(DatabaseConstants.MYSQL_REMOTE_DB_USER));
 		databaseProperties.put("password",prop.getProperty(DatabaseConstants.MYSQL_REMOTE_DB_PASSWORD));
 		return databaseProperties;
-		
 	}
 	
 	/**
@@ -70,10 +72,46 @@ public class ManageDataDAO {
 			con.close();  
 			}
 		}
-		catch(Exception e)
-		{ 
+		catch(Exception e){ 
 			System.out.println("Could not execute Watchlist Query because "+e);
 		}
 		return symbolList;	
 	} 
-}
+	
+	/**
+	 * Function to insert daily Candlestick(s) data into database
+	 * @param List<DailyCandle> List of Daily Candle Data
+	 * @return int Count of records updated
+	 */
+	public int insertDailyCandleData(List<DailyCandle> candleList){ 
+		int recordsUpdated = 0;
+		try{ 
+			Map<String,String> databaseProperties = this.getDBProperties();
+			Connection con = CreateDatabaseConnection.getMySQLConnection(databaseProperties.get("ip"),Integer.parseInt(databaseProperties.get("port")),databaseProperties.get("name"),databaseProperties.get("user"),databaseProperties.get("password"));  
+			 
+			if(con !=null){
+				Iterator<DailyCandle> listIterator = candleList.iterator();
+				while (listIterator.hasNext()) {
+					DailyCandle dailyCandle = listIterator.next();
+					PreparedStatement stmt=con.prepareStatement("insert into data_quandl_daily values(?,?,?,?,?,?,?)");  
+					stmt.setString(1,dailyCandle.getTime());
+					stmt.setString(2,dailyCandle.getSymbol());  
+					stmt.setDouble(3, dailyCandle.getOpen());
+					stmt.setDouble(4, dailyCandle.getHigh());
+					stmt.setDouble(5, dailyCandle.getLow());
+					stmt.setDouble(6, dailyCandle.getClose());
+					stmt.setLong(7, dailyCandle.getVolume());
+					recordsUpdated = recordsUpdated+stmt.executeUpdate();
+				}
+				System.out.println(recordsUpdated+" records inserted");  
+				  
+				con.close();  
+			}
+		}
+		catch(Exception e){ 
+				System.out.println("Could not execute Watchlist Query because "+e);
+			}
+		return recordsUpdated;
+		} 
+	}
+
