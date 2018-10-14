@@ -1,5 +1,6 @@
 package com.util;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,21 +16,20 @@ public class DataUtil {
 		if(responseData != null) {
 			
 			dailyCandleList = new ArrayList<DailyCandleDTO>();
-			
-			for(List<String> inputData : responseData.getDataset().getData()) {
-				
+			int i=0;
+			while(i < responseData.getDataset().getData().size()) {
+				List<String> candleData = responseData.getDataset().getData().get(i);
 				DailyCandleDTO dailyCandleDTO = new DailyCandleDTO();
-				dailyCandleDTO.setTime(inputData.get(0));
-				dailyCandleDTO.setOpen(inputData.get(1));
-				dailyCandleDTO.setHigh(inputData.get(2));
-				dailyCandleDTO.setLow(inputData.get(3));
-				dailyCandleDTO.setClose(inputData.get(5));
-				dailyCandleDTO.setVolume(inputData.get(6));
-				dailyCandleList.add(dailyCandleDTO);			
-				
+				dailyCandleDTO.setTime(candleData.get(0));
+				dailyCandleDTO.setSymbol("symbol");
+				dailyCandleDTO.setOpen(Double.parseDouble(candleData.get(1)));
+				dailyCandleDTO.setHigh(Double.parseDouble(candleData.get(2)));
+				dailyCandleDTO.setLow(Double.parseDouble(candleData.get(3)));
+				dailyCandleDTO.setClose(Double.parseDouble(candleData.get(5)));
+				dailyCandleDTO.setVolume(new BigDecimal(candleData.get(6)));
+				dailyCandleList.add(dailyCandleDTO);
+				i++;
 			}
-			
-			
 		}
 		
 		return dailyCandleList;

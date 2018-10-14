@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.constants.DatabaseConstants;
-import com.model.DailyCandle;
+import com.model.DailyCandleDTO;
 import com.model.SymbolDTO;
 
 public class ManageDataDAO {
@@ -83,16 +83,16 @@ public class ManageDataDAO {
 	 * @param List<DailyCandle> List of Daily Candle Data
 	 * @return int Count of records updated
 	 */
-	public int insertDailyCandleData(List<DailyCandle> candleList){ 
+	public int insertDailyCandleData(List<DailyCandleDTO> candleList){ 
 		int recordsUpdated = 0;
 		try{ 
 			Map<String,String> databaseProperties = this.getDBProperties();
 			Connection con = CreateDatabaseConnection.getMySQLConnection(databaseProperties.get("ip"),Integer.parseInt(databaseProperties.get("port")),databaseProperties.get("name"),databaseProperties.get("user"),databaseProperties.get("password"));  
 			 
 			if(con !=null){
-				Iterator<DailyCandle> listIterator = candleList.iterator();
+				Iterator<DailyCandleDTO> listIterator = candleList.iterator();
 				while (listIterator.hasNext()) {
-					DailyCandle dailyCandle = listIterator.next();
+					DailyCandleDTO dailyCandle = listIterator.next();
 					PreparedStatement stmt=con.prepareStatement("insert into data_quandl_daily values(?,?,?,?,?,?,?)");  
 					stmt.setString(1,dailyCandle.getTime());
 					stmt.setString(2,dailyCandle.getSymbol());  
@@ -100,7 +100,7 @@ public class ManageDataDAO {
 					stmt.setDouble(4, dailyCandle.getHigh());
 					stmt.setDouble(5, dailyCandle.getLow());
 					stmt.setDouble(6, dailyCandle.getClose());
-					stmt.setLong(7, dailyCandle.getVolume());
+					stmt.setBigDecimal(7, dailyCandle.getVolume());
 					recordsUpdated = recordsUpdated+stmt.executeUpdate();
 				}
 				System.out.println(recordsUpdated+" records inserted");  

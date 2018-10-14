@@ -37,6 +37,8 @@ public class QuandlConnection {
 			QuandlResponseDTO data = jsonParser.fromJSON(EntityUtils.toString(response.getEntity()));
 			
 			List<DailyCandleDTO> dailyCandleData = DataUtil.getDailyCandleDataList(data);
+			ManageDataDAO manageData = new ManageDataDAO();
+			manageData.insertDailyCandleData(dailyCandleData);
 		
 			// Get the response
 			BufferedReader br;
