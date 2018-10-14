@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.constants.DatabaseConstants;
-import com.model.Symbol;
+import com.model.SymbolDTO;
 
 public class ManageDataDAO {
 	
@@ -49,8 +49,8 @@ public class ManageDataDAO {
 	 * @param marketWatch Marketwatch name
 	 * @return List<Symbol>
 	 */
-	public List<Symbol> getWatchListSymbols(String marketWatch){ 
-		List<Symbol> symbolList = new ArrayList<Symbol>();
+	public List<SymbolDTO> getWatchListSymbols(String marketWatch){ 
+		List<SymbolDTO> symbolList = new ArrayList<SymbolDTO>();
 		
 		try{ 
 		Map<String,String> databaseProperties = this.getDBProperties();
@@ -61,7 +61,7 @@ public class ManageDataDAO {
 			Statement stmt=con.createStatement();  
 			ResultSet rs=stmt.executeQuery(DatabaseConstants.WATCHLIST_QUERY);
 			while (rs.next()) {
-	            Symbol symbol = new Symbol();
+	            SymbolDTO symbol = new SymbolDTO();
 	            symbol.setSymbol(rs.getString(DatabaseConstants.WATCHLIST_COLUMN_SYMBOL));
 	            symbol.setCompanyName(rs.getString(DatabaseConstants.WATCHLIST_COLUMN_COMPANY_NAME));
 	            symbol.setSector(rs.getString(DatabaseConstants.WATCHLIST_COLUMN_SECTOR));

@@ -5,3 +5,6 @@
 
 # JDT-specific (Eclipse Java Development Tools)     
 .classpath
+
+*.class
+.settings/*

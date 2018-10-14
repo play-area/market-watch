@@ -1,6 +1,6 @@
 package com.model;
 
-public class Symbol {
+public class SymbolDTO {
 	private String symbol;
 	private String companyName;
 	private String sector;

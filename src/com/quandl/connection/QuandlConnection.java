@@ -7,6 +7,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.dao.ManageDataDAO;
+
 public class QuandlConnection {
 
 	public static void main(String[] args) {
@@ -16,7 +18,6 @@ public class QuandlConnection {
 		HttpResponse response;
 		try {
 			response = client.execute(request);
-		
 			// Get the response
 			BufferedReader br;
 			
