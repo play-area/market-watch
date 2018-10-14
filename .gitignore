@@ -1,7 +1,10 @@
 #Put the files and paths to be ignored from GIT Repo here
 
-# Eclipse Core      
-.project
+#Folders to Ignore
+bin/
 
-# JDT-specific (Eclipse Java Development Tools)     
+# Files to Ignore      
+.project  
 .classpath
+*.class
+.settings/*

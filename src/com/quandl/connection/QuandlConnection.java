@@ -16,6 +16,8 @@ import com.model.QuandlResponseDTO;
 import com.util.DailyCandleJSONParser;
 import com.util.DataUtil;
 
+import com.dao.ManageDataDAO;
+
 public class QuandlConnection {
 
 	public static void main(String[] args) throws IOException {
