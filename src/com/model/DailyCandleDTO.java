@@ -1,6 +1,6 @@
 package com.model;
 
-public class DailyCandle {
+public class DailyCandleDTO {
 	
 	public String time;
 	public String open;
