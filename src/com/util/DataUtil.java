@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.model.BackTestingOutputDTO;
 import com.model.DailyCandleDTO;
 import com.model.QuandlResponseDTO;
+import com.model.TradeDTO;
 
 public class DataUtil {
 
@@ -33,6 +35,19 @@ public class DataUtil {
 		}
 		
 		return dailyCandleList;
+	}
+	
+	public static BackTestingOutputDTO getBackTestingResults(List<TradeDTO> tradeDTOList) {
+		BackTestingOutputDTO backTestingOutputDTO = new BackTestingOutputDTO();
+		
+		
+//		backTestingOutputDTO.setTotalTrades(totalTrades);
+//		backTestingOutputDTO.setTotalWinnigTrades(totalWinnigTrades);
+//		backTestingOutputDTO.setTotalLoosingTrades(totalLoosingTrades);
+//		backTestingOutputDTO.setWinPercentage(winPercentage);
+		
+		return null;
+		
 	}
 
 }

@@ -6,6 +6,7 @@ public class BackTestingOutputDTO {
 	Double finalCapital;
 	Double totalProfitLoss;
 	Double profitLossPercentage;
+	Integer totalTrades;
 	Integer totalWinnigTrades;
 	Integer totalLoosingTrades;
 	Double winPercentage;
@@ -15,7 +16,6 @@ public class BackTestingOutputDTO {
 	Integer loosingStreakSize;
 	Double maxDrawDown;
 	Integer averageTradeDuration;
-	
 	
 	public Double getInitialCapital() {
 		return initialCapital;
@@ -40,6 +40,12 @@ public class BackTestingOutputDTO {
 	}
 	public void setProfitLossPercentage(Double profitLossPercentage) {
 		this.profitLossPercentage = profitLossPercentage;
+	}
+	public Integer getTotalTrades() {
+		return totalTrades;
+	}
+	public void setTotalTrades(Integer totalTrades) {
+		this.totalTrades = totalTrades;
 	}
 	public Integer getTotalWinnigTrades() {
 		return totalWinnigTrades;
@@ -89,7 +95,6 @@ public class BackTestingOutputDTO {
 	public void setMaxDrawDown(Double maxDrawDown) {
 		this.maxDrawDown = maxDrawDown;
 	}
-	
 	public Integer getAverageTradeDuration() {
 		return averageTradeDuration;
 	}
