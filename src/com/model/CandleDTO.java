@@ -2,7 +2,7 @@ package com.model;
 
 import java.math.BigDecimal;
 
-public class DailyCandleDTO {
+public class CandleDTO {
 	
 	public String time;
 	public String symbol;

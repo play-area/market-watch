@@ -1,14 +1,16 @@
 package com.model;
 
+import java.util.Date;
+
 public class TradeDTO {
 	
 	Double entryPrice;
 	Double exitPrice;
 	Integer volume;
+	Date startTime;
+	Date endTime;
 	String status;
 	Double profitLoss;
-	Integer tradeDuration;
-	
 	
 	public Double getEntryPrice() {
 		return entryPrice;
@@ -28,6 +30,18 @@ public class TradeDTO {
 	public void setVolume(Integer volume) {
 		this.volume = volume;
 	}
+	public Date getStartTime() {
+		return startTime;
+	}
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+	public Date getEndTime() {
+		return endTime;
+	}
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
 	public String getStatus() {
 		return status;
 	}
@@ -39,12 +53,6 @@ public class TradeDTO {
 	}
 	public void setProfitLoss(Double profitLoss) {
 		this.profitLoss = profitLoss;
-	}
-	public Integer getTradeDuration() {
-		return tradeDuration;
-	}
-	public void setTradeDuration(Integer tradeDuration) {
-		this.tradeDuration = tradeDuration;
 	}
 	
 }

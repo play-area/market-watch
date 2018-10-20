@@ -11,7 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import com.model.DailyCandleDTO;
+import com.model.CandleDTO;
 import com.model.QuandlResponseDTO;
 import com.util.DailyCandleJSONParser;
 import com.util.DataUtil;
@@ -36,7 +36,7 @@ public class QuandlConnection {
 			
 			QuandlResponseDTO data = jsonParser.fromJSON(EntityUtils.toString(response.getEntity()));
 			
-			List<DailyCandleDTO> dailyCandleData = DataUtil.getDailyCandleDataList(data);
+			List<CandleDTO> dailyCandleData = DataUtil.getDailyCandleDataList(data);
 			ManageDataDAO manageData = new ManageDataDAO();
 			manageData.insertDailyCandleData(dailyCandleData);
 		

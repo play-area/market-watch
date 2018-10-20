@@ -5,23 +5,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.model.BackTestingOutputDTO;
-import com.model.DailyCandleDTO;
+import com.model.CandleDTO;
 import com.model.QuandlResponseDTO;
 import com.model.TradeDTO;
 
 public class DataUtil {
 
-	public static List<DailyCandleDTO> getDailyCandleDataList(QuandlResponseDTO responseData) {
+	public static List<CandleDTO> getDailyCandleDataList(QuandlResponseDTO responseData) {
 		
-		List<DailyCandleDTO> dailyCandleList = null;
+		List<CandleDTO> dailyCandleList = null;
 		
 		if(responseData != null) {
 			
-			dailyCandleList = new ArrayList<DailyCandleDTO>();
+			dailyCandleList = new ArrayList<CandleDTO>();
 			int i=0;
 			while(i < responseData.getDataset().getData().size()) {
 				List<String> candleData = responseData.getDataset().getData().get(i);
-				DailyCandleDTO dailyCandleDTO = new DailyCandleDTO();
+				CandleDTO dailyCandleDTO = new CandleDTO();
 				dailyCandleDTO.setTime(candleData.get(0));
 				dailyCandleDTO.setSymbol("symbol");
 				dailyCandleDTO.setOpen(Double.parseDouble(candleData.get(1)));
