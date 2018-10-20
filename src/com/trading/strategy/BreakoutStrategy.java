@@ -35,7 +35,7 @@ public class BreakoutStrategy {
 	 * @param volumeMultiple Volume multiple of the candle relative to the average volume of the last n candle(s).
 	 * @return boolean
 	 */
-	public boolean entryCandleCriteria(CandleDTO candleDTO,int lookbackPeriod,double candleHightMultiple,double candleWickMultiple,double volumeMultiple) {
+	public boolean isValidBreakoutEntry(CandleDTO candleDTO,int lookbackPeriod,double candleHightMultiple,double candleWickMultiple,double volumeMultiple) {
 		boolean isCandleElligible;
 		
 		return false;
@@ -43,14 +43,12 @@ public class BreakoutStrategy {
 	}
 	
 	/**
-	 * Function to check if the candle is Eligible or not
-	 * @param candleDTOList Data Input for performing backtesting
-	 * @param lookbackPeriod The last n candle(s) above/below which the current candle is breaking out.
-	 * @param candleHightMultiple Height Multiple of the current candle relative to average of the last n candle height(s).
-	 * @param candleWickMultiple Length of the Directional Wick relative to the height of the candle.
-	 * @param volumeMultiple Volume multiple of the candle relative to the average volume of the last n candle(s).
+	 * Function to get exit candle(s)
+	 * @return 
 	 * @return boolean
 	 */
-	public hashMap 
+	public void isValidBreakoutExit() {
+		
+	}
 
 }

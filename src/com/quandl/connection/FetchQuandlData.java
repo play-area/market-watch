@@ -18,7 +18,7 @@ import com.util.DataUtil;
 
 import com.dao.ManageDataDAO;
 
-public class QuandlConnection {
+public class FetchQuandlData {
 
 	public static void main(String[] args) throws IOException {
 		HttpClient client = new DefaultHttpClient();
