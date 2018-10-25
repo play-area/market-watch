@@ -1,8 +1,8 @@
-package com.util;
+package com.trading.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.model.QuandlResponseDTO;
+import com.trading.model.QuandlResponseDTO;
 
 public class DailyCandleJSONParser {
 	

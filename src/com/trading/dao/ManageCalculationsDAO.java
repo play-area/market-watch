@@ -1,4 +1,4 @@
-package com.dao;
+package com.trading.dao;
 
 public class ManageCalculationsDAO {
 

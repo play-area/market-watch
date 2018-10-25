@@ -1,4 +1,4 @@
-package com.util;
+package com.trading.util;
 
 import java.util.List;
 

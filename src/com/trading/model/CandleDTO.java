@@ -1,20 +1,22 @@
-package com.model;
+package com.trading.model;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class CandleDTO {
 	
-	public String time;
+	public Date time;
 	public String symbol;
 	public Double open;
 	public Double high;
 	public Double low;
 	public Double close;
 	public BigDecimal volume;
-	public String getTime() {
+	
+	public Date getTime() {
 		return time;
 	}
-	public void setTime(String time) {
+	public void setTime(Date time) {
 		this.time = time;
 	}
 	public String getSymbol() {
@@ -53,5 +55,4 @@ public class CandleDTO {
 	public void setVolume(BigDecimal volume) {
 		this.volume = volume;
 	}
-	
 }

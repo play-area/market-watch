@@ -3,9 +3,9 @@ package com.trading.strategy;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.constants.ExitStrategy;
-import com.model.CandleDTO;
-import com.model.TradeDTO;
+import com.trading.constants.ExitStrategy;
+import com.trading.model.CandleDTO;
+import com.trading.model.TradeDTO;
 
 public class BreakoutStrategy {
 	
@@ -47,7 +47,7 @@ public class BreakoutStrategy {
 	 * @return 
 	 * @return boolean
 	 */
-	public void isValidBreakoutExit() {
+	public void T() {
 		
 	}
 

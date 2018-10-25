@@ -1,4 +1,4 @@
-package com.model;
+package com.trading.model;
 
 public class SymbolDTO {
 	private String symbol;

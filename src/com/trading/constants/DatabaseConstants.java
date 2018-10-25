@@ -1,4 +1,4 @@
-package com.constants;
+package com.trading.constants;
 
 public class DatabaseConstants {
 	
@@ -15,7 +15,10 @@ public class DatabaseConstants {
 	
 	
 	//Queries
-	public static final String WATCHLIST_QUERY = "select * from watchlist_nifty_fo";
+	public static final String WATCHLIST_QUERY = "SELECT * FROM watchlist_nifty_fo";
+	public static final String CANDLES_QUERY_1 = "SELECT * FROM "; 
+	public static final String CANDLES_QUERY_2 = " WHERE symbol =?";
+	
 	
 	public static final String WATCHLIST_COLUMN_SYMBOL = "symbol";
 	public static final String WATCHLIST_COLUMN_COMPANY_NAME = "company_name";

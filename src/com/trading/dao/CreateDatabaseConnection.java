@@ -1,10 +1,10 @@
-package com.dao;
+package com.trading.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.constants.DatabaseConstants;
+import com.trading.constants.DatabaseConstants;
 
 public class CreateDatabaseConnection {
 	

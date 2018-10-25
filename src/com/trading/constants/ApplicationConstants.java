@@ -1,4 +1,4 @@
-package com.constants;
+package com.trading.constants;
 
 public class ApplicationConstants {
 	

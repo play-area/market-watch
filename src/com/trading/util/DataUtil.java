@@ -1,13 +1,15 @@
-package com.util;
+package com.trading.util;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.model.BackTestingOutputDTO;
-import com.model.CandleDTO;
-import com.model.QuandlResponseDTO;
-import com.model.TradeDTO;
+import com.trading.model.BackTestingOutputDTO;
+import com.trading.model.CandleDTO;
+import com.trading.model.QuandlResponseDTO;
+import com.trading.model.TradeDTO;
 
 public class DataUtil {
 
@@ -19,10 +21,12 @@ public class DataUtil {
 			
 			dailyCandleList = new ArrayList<CandleDTO>();
 			int i=0;
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			try {
 			while(i < responseData.getDataset().getData().size()) {
 				List<String> candleData = responseData.getDataset().getData().get(i);
 				CandleDTO dailyCandleDTO = new CandleDTO();
-				dailyCandleDTO.setTime(candleData.get(0));
+				dailyCandleDTO.setTime(df.parse(candleData.get(0)));
 				dailyCandleDTO.setSymbol("symbol");
 				dailyCandleDTO.setOpen(Double.parseDouble(candleData.get(1)));
 				dailyCandleDTO.setHigh(Double.parseDouble(candleData.get(2)));
@@ -31,6 +35,10 @@ public class DataUtil {
 				dailyCandleDTO.setVolume(new BigDecimal(candleData.get(6)));
 				dailyCandleList.add(dailyCandleDTO);
 				i++;
+			}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		

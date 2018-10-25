@@ -1,8 +1,9 @@
-package com.dao;
+package com.trading.dao;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,11 +15,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import com.constants.DatabaseConstants;
-import com.model.CandleDTO;
-import com.model.SymbolDTO;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.trading.constants.DatabaseConstants;
+import com.trading.model.CandleDTO;
+import com.trading.model.SymbolDTO;
 
 public class ManageDataDAO {
+	
+	private static Logger LOG = LogManager.getLogger();
 	
 	/**
 	 * Function to get Database Properties from Property File
@@ -73,9 +80,49 @@ public class ManageDataDAO {
 			}
 		}
 		catch(Exception e){ 
-			System.out.println("Could not execute Watchlist Query because "+e);
+			LOG.error("Could not execute Watchlist Query because "+e);
 		}
 		return symbolList;	
+	} 
+	
+	/**
+	 * Function to get the the Candle(s) from a particular table
+	 * @param tableName table name
+	 * @param List<String> symbols
+	 * @return List<CandleDTO>
+	 */
+	public List<List<CandleDTO>> getCandlesData(String tableName, List<String> symbols){ 
+		List<List<CandleDTO>> candleList = new ArrayList<List<CandleDTO>>();
+		
+		try{ 
+			Map<String,String> databaseProperties = this.getDBProperties();
+			Connection con = CreateDatabaseConnection.getMySQLConnection(databaseProperties.get("ip"),Integer.parseInt(databaseProperties.get("port")),databaseProperties.get("name"),databaseProperties.get("user"),databaseProperties.get("password"));  
+			 
+			if(con !=null && CollectionUtils.isNotEmpty(symbols)){
+				for(String symbol:symbols) {
+					List<CandleDTO> candleDTOList = new ArrayList<CandleDTO>();
+					PreparedStatement stmt=con.prepareStatement(DatabaseConstants.CANDLES_QUERY_1+tableName+DatabaseConstants.CANDLES_QUERY_2); 
+					stmt.setString(1,symbol); 
+					ResultSet rs = stmt.executeQuery();
+					while(rs.next()) {
+						CandleDTO candle = new CandleDTO();
+						candle.setTime(new java.util.Date(rs.getDate(1).getTime()));
+						candle.setSymbol(rs.getString(2));
+						candle.setOpen(rs.getDouble(3));
+						candle.setHigh(rs.getDouble(4));
+						candle.setLow(rs.getDouble(5));
+						candle.setClose(rs.getDouble(6));
+						candle.setVolume(rs.getBigDecimal(7));
+						candleDTOList.add(candle);
+						}
+					candleList.add(candleDTOList);
+				}
+				con.close();  
+			}
+		}catch(Exception e){ 
+			LOG.error("Could not execute Get Candle(s) Query because "+e);
+		}
+		return candleList;	
 	} 
 	
 	/**
@@ -83,34 +130,35 @@ public class ManageDataDAO {
 	 * @param List<DailyCandle> List of Daily Candle Data
 	 * @return int Count of records updated
 	 */
-	public int insertDailyCandleData(List<CandleDTO> candleList){ 
+	public int insertDailyCandleData(List<List<CandleDTO>> candleList){ 
 		int recordsUpdated = 0;
 		try{ 
 			Map<String,String> databaseProperties = this.getDBProperties();
 			Connection con = CreateDatabaseConnection.getMySQLConnection(databaseProperties.get("ip"),Integer.parseInt(databaseProperties.get("port")),databaseProperties.get("name"),databaseProperties.get("user"),databaseProperties.get("password"));  
-			 
-			if(con !=null){
-				Iterator<CandleDTO> listIterator = candleList.iterator();
-				while (listIterator.hasNext()) {
-					CandleDTO dailyCandle = listIterator.next();
-					PreparedStatement stmt=con.prepareStatement("insert into data_quandl_daily values(?,?,?,?,?,?,?)");  
-					stmt.setString(1,dailyCandle.getTime());
-					stmt.setString(2,dailyCandle.getSymbol());  
-					stmt.setDouble(3, dailyCandle.getOpen());
-					stmt.setDouble(4, dailyCandle.getHigh());
-					stmt.setDouble(5, dailyCandle.getLow());
-					stmt.setDouble(6, dailyCandle.getClose());
-					stmt.setBigDecimal(7, dailyCandle.getVolume());
-					recordsUpdated = recordsUpdated+stmt.executeUpdate();
+			
+			if(con !=null && CollectionUtils.isNotEmpty(candleList) ){ 
+				for(List<CandleDTO> candleDTOList: candleList) {
+					Iterator<CandleDTO> listIterator = candleDTOList.iterator();
+					while (listIterator.hasNext()) {
+						CandleDTO dailyCandle = listIterator.next();
+						PreparedStatement stmt=con.prepareStatement("insert into data_quandl_daily values(?,?,?,?,?,?,?)");  
+						stmt.setDate(1,java.sql.Date.valueOf(dailyCandle.getTime().toString()));
+						stmt.setString(2,dailyCandle.getSymbol());  
+						stmt.setDouble(3, dailyCandle.getOpen());
+						stmt.setDouble(4, dailyCandle.getHigh());
+						stmt.setDouble(5, dailyCandle.getLow());
+						stmt.setDouble(6, dailyCandle.getClose());
+						stmt.setBigDecimal(7, dailyCandle.getVolume());
+						recordsUpdated = recordsUpdated+stmt.executeUpdate();
+					}
+					LOG.info(recordsUpdated+" records inserted");
+					System.out.println(recordsUpdated+" records inserted");  
+					con.close();  
 				}
-				System.out.println(recordsUpdated+" records inserted");  
-				  
-				con.close();  
 			}
+		}catch(Exception e){ 
+			LOG.error("Could not insert Candle(s) records because "+e);
 		}
-		catch(Exception e){ 
-				System.out.println("Could not execute Watchlist Query because "+e);
-			}
 		return recordsUpdated;
 		} 
 	}

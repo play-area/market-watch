@@ -1,16 +1,16 @@
-package com.trading.strategy.test;
+package com.trading.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.constants.ExitStrategy;
-import com.model.BackTestingOutputDTO;
-import com.model.CandleDTO;
-import com.model.TradeDTO;
+import com.trading.constants.ExitStrategy;
+import com.trading.model.BackTestingOutputDTO;
+import com.trading.model.CandleDTO;
+import com.trading.model.TradeDTO;
 import com.trading.strategy.BreakoutStrategy;
-import com.util.DataUtil;
+import com.trading.util.DataUtil;
 
-public class TestBreakoutStrategy {
+public class BreakoutStrategyBacktestingService {
 	
 	public static void main(String args[]) {
 		BreakoutStrategy breakoutStrategy = new BreakoutStrategy();
