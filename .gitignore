@@ -2,6 +2,7 @@
 
 #Folders to Ignore
 bin/
+logs/
 
 # Files to Ignore      
 .project  
