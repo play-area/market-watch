@@ -27,7 +27,7 @@ public class DataUtil {
 				List<String> candleData = responseData.getDataset().getData().get(i);
 				CandleDTO dailyCandleDTO = new CandleDTO();
 				dailyCandleDTO.setTime(df.parse(candleData.get(0)));
-				dailyCandleDTO.setSymbol("symbol");
+				dailyCandleDTO.setSymbol(responseData.getDataset().getDataset_code());
 				dailyCandleDTO.setOpen(Double.parseDouble(candleData.get(1)));
 				dailyCandleDTO.setHigh(Double.parseDouble(candleData.get(2)));
 				dailyCandleDTO.setLow(Double.parseDouble(candleData.get(3)));

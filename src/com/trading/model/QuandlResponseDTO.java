@@ -2,13 +2,13 @@ package com.trading.model;
 
 public class QuandlResponseDTO {
 	
-	private DataSetDTO dataset;
+	private QuandlDataSetDTO dataset;
 
-	public DataSetDTO getDataset() {
+	public QuandlDataSetDTO getDataset() {
 		return dataset;
 	}
 
-	public void setDataset(DataSetDTO dataset) {
+	public void setDataset(QuandlDataSetDTO dataset) {
 		this.dataset = dataset;
 	}
 	

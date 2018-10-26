@@ -3,6 +3,7 @@ package com.trading.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,16 +21,19 @@ public class QuandlDataService {
 		List<String> symbolList = new ArrayList<String>();
 		symbolList.add("VEDL");
 		symbolList.add("SBIN");
-		LOG.info("Symbol List for getting data from Quandl"+symbolList);
+		LOG.info("Fetching data from Quandl for : "+symbolList);
 		try {
 			//Getting data from Quandl API
 			candleList = getQuandlData.getDataFromQuandl(symbolList);
 			//Inserting Quandl data into Database
-			manageDataDao.insertDailyCandleData(candleList);
-			
-			
+			for(List<CandleDTO> candleDTOList : candleList) {
+				if(CollectionUtils.isNotEmpty(candleDTOList)){
+					LOG.info("Data received from Quandl for Symbol "+ candleDTOList.get(0).getSymbol() +" has records :"+candleDTOList.size());
+					LOG.info("Records inserted into database : "+manageDataDao.insertDailyCandleData(candleDTOList));
+				}
+			}
 		} catch (Exception e) {
-			System.out.println("Exception thrown :"+e);
+			LOG.error("Exception thrown :"+e);
 		}
 	}
 

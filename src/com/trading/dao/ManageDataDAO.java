@@ -130,36 +130,30 @@ public class ManageDataDAO {
 	 * @param List<DailyCandle> List of Daily Candle Data
 	 * @return int Count of records updated
 	 */
-	public int insertDailyCandleData(List<List<CandleDTO>> candleList){ 
+	public int insertDailyCandleData(List<CandleDTO> candleDTOList){ 
 		int recordsUpdated = 0;
 		try{ 
 			Map<String,String> databaseProperties = this.getDBProperties();
 			Connection con = CreateDatabaseConnection.getMySQLConnection(databaseProperties.get("ip"),Integer.parseInt(databaseProperties.get("port")),databaseProperties.get("name"),databaseProperties.get("user"),databaseProperties.get("password"));  
 			
-			if(con !=null && CollectionUtils.isNotEmpty(candleList) ){ 
-				for(List<CandleDTO> candleDTOList: candleList) {
-					Iterator<CandleDTO> listIterator = candleDTOList.iterator();
-					while (listIterator.hasNext()) {
-						CandleDTO dailyCandle = listIterator.next();
-						PreparedStatement stmt=con.prepareStatement("insert into data_quandl_daily values(?,?,?,?,?,?,?)");  
-						stmt.setDate(1,java.sql.Date.valueOf(dailyCandle.getTime().toString()));
-						stmt.setString(2,dailyCandle.getSymbol());  
-						stmt.setDouble(3, dailyCandle.getOpen());
-						stmt.setDouble(4, dailyCandle.getHigh());
-						stmt.setDouble(5, dailyCandle.getLow());
-						stmt.setDouble(6, dailyCandle.getClose());
-						stmt.setBigDecimal(7, dailyCandle.getVolume());
+			if(con !=null && CollectionUtils.isNotEmpty(candleDTOList) ){ 
+				for(CandleDTO candleDTO:candleDTOList) {
+						PreparedStatement stmt=con.prepareStatement("INSERT INTO data_quandl_daily VALUES(?,?,?,?,?,?,?)");  
+						stmt.setDate(1,new java.sql.Date((candleDTO.getTime().getTime())));
+						stmt.setString(2,candleDTO.getSymbol());  
+						stmt.setDouble(3, candleDTO.getOpen());
+						stmt.setDouble(4, candleDTO.getHigh());
+						stmt.setDouble(5, candleDTO.getLow());
+						stmt.setDouble(6, candleDTO.getClose());
+						stmt.setBigDecimal(7, candleDTO.getVolume());
 						recordsUpdated = recordsUpdated+stmt.executeUpdate();
 					}
-					LOG.info(recordsUpdated+" records inserted");
-					System.out.println(recordsUpdated+" records inserted");  
-					con.close();  
-				}
+				con.close();  
 			}
 		}catch(Exception e){ 
 			LOG.error("Could not insert Candle(s) records because "+e);
 		}
 		return recordsUpdated;
-		} 
-	}
+	} 
+}
 
