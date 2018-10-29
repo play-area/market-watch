@@ -13,11 +13,13 @@ public class DatabaseConstants {
 	public static final String MYSQL_DB_DRIVER = "com.mysql.jdbc.Driver";
 	public static final String MYSQL_DB_DRIVER_TYPE = "jdbc:mysql";
 	
+	// Table Names
+	public static final String DATA_QUANDL_DAILY = "data_quandl_daily";
 	
 	//Queries
 	public static final String WATCHLIST_QUERY = "SELECT * FROM watchlist_nifty_fo";
 	public static final String CANDLES_QUERY_1 = "SELECT * FROM "; 
-	public static final String CANDLES_QUERY_2 = " WHERE symbol =?";
+	public static final String CANDLES_QUERY_2 = " WHERE symbol =? ORDER BY recorddate ASC";
 	
 	
 	public static final String WATCHLIST_COLUMN_SYMBOL = "symbol";

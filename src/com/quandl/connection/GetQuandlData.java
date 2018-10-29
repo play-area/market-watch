@@ -46,7 +46,7 @@ public class GetQuandlData {
 					QuandlResponseDTO quandlResponse = jsonParser.fromJSON(EntityUtils.toString(response.getEntity()));
 					candleDTOList = DataUtil.getDailyCandleDataList(quandlResponse);
 				} catch (Exception e) {
-					LOG.error("Error Occured while getting data from Quandl"+e);
+					LOG.error("Error Occured while getting data for symbol : "+ symbol  +" from Quandl "+e);
 				}
 				candleList.add(candleDTOList);
 			}

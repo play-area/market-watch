@@ -18,9 +18,7 @@ public class QuandlDataService {
 		GetQuandlData getQuandlData = new GetQuandlData();
 		ManageDataDAO manageDataDao = new ManageDataDAO();
 		List<List<CandleDTO>> candleList = new ArrayList<List<CandleDTO>>();
-		List<String> symbolList = new ArrayList<String>();
-		symbolList.add("VEDL");
-		symbolList.add("SBIN");
+		List<String> symbolList = getWatchList();
 		LOG.info("Fetching data from Quandl for : "+symbolList);
 		try {
 			//Getting data from Quandl API
@@ -36,5 +34,18 @@ public class QuandlDataService {
 			LOG.error("Exception thrown :"+e);
 		}
 	}
+	
+	/**
+	 * Function to get data from Quandl
+	 * @param List<String> symbolList List of symbols for which data needs to be fetched.
+	 * @return List<String>
+	 */
+	public static List<String> getWatchList(){
+		List<String> symbolList = new ArrayList<String>();
+		symbolList.add("VEDL");
+		symbolList.add("SBIN");
+		return symbolList;
+	}
 
 }
+

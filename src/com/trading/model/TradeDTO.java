@@ -6,10 +6,14 @@ public class TradeDTO {
 	
 	Double entryPrice;
 	Double exitPrice;
-	Integer volume;
+	Double expectedStopLoss;
+	Double expectedTarget;
+	CandleDTO entryCandle;
+	Integer size;
 	Date startTime;
 	Date endTime;
 	String status;
+	String tradeType;
 	Double profitLoss;
 	
 	public Double getEntryPrice() {
@@ -24,11 +28,29 @@ public class TradeDTO {
 	public void setExitPrice(Double exitPrice) {
 		this.exitPrice = exitPrice;
 	}
-	public Integer getVolume() {
-		return volume;
+	public Double getExpectedStopLoss() {
+		return expectedStopLoss;
 	}
-	public void setVolume(Integer volume) {
-		this.volume = volume;
+	public void setExpectedStopLoss(Double expectedStopLoss) {
+		this.expectedStopLoss = expectedStopLoss;
+	}
+	public Double getExpectedTarget() {
+		return expectedTarget;
+	}
+	public void setExpectedTarget(Double expectedTarget) {
+		this.expectedTarget = expectedTarget;
+	}
+	public CandleDTO getEntryCandle() {
+		return entryCandle;
+	}
+	public void setEntryCandle(CandleDTO entryCandle) {
+		this.entryCandle = entryCandle;
+	}
+	public Integer getSize() {
+		return size;
+	}
+	public void setSize(Integer size) {
+		this.size = size;
 	}
 	public Date getStartTime() {
 		return startTime;
@@ -48,11 +70,17 @@ public class TradeDTO {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	public String getTradeType() {
+		return tradeType;
+	}
+	public void setTradeType(String tradeType) {
+		this.tradeType = tradeType;
+	}
 	public Double getProfitLoss() {
 		return profitLoss;
 	}
 	public void setProfitLoss(Double profitLoss) {
 		this.profitLoss = profitLoss;
 	}
-	
+
 }
