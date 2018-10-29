@@ -39,20 +39,21 @@ public class BreakoutStrategyBacktestingService {
 				}
 			}
 		}
-		
-		List<TradeDTO> listTradeDTO = breakoutStrategy.executeBreakoutStrategy(candleList.get(1), 20, 50, 1.5, 0.3, new BigDecimal(1.5), ExitStrategy.RiskRewardOneTwoWithTrailing, 3000);
-		LOG.info("######################### The following trades were taken ##############################");
-		double profitLoss = 0;
-		for(TradeDTO tradeDTO : listTradeDTO) {
-			LOG.info("Trade details : "+ tradeDTO.getStartTime() + " TRADE TYPE "+tradeDTO.getTradeType()+" ENTRY PRICE "+ tradeDTO.getEntryPrice()+" EXIT PRICE "+tradeDTO.getExitPrice());
-			if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG) && tradeDTO.getStatus().equalsIgnoreCase(ApplicationConstants.CLOSED)) {
-				profitLoss = profitLoss + 3000*(tradeDTO.getExitPrice()- tradeDTO.getEntryPrice());
-			}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)  && tradeDTO.getStatus().equalsIgnoreCase(ApplicationConstants.CLOSED)) {
-				profitLoss = profitLoss + 3000*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice());
+		for(List<CandleDTO> candleDTOList : candleList) {
+			List<TradeDTO> listTradeDTO = breakoutStrategy.executeBreakoutStrategy(candleDTOList, 20, 50, 1.5, 0.3, new BigDecimal(1.5), ExitStrategy.RiskRewardOneTwo, 3000);
+			LOG.info("######################### The following trades were taken ##############################");
+			for(TradeDTO tradeDTO : listTradeDTO) {
+				LOG.info("Trade details : "+ tradeDTO.getStartTime() + " TRADE TYPE "+tradeDTO.getTradeType()+" ENTRY PRICE "+ tradeDTO.getEntryPrice()+" EXIT PRICE "+tradeDTO.getExitPrice());
 			}
+			BackTestingOutputDTO backTestingOutputDTO = DataUtil.getBackTestingResults(listTradeDTO);
+			LOG.info("#############Backtesting Output##################");
+			LOG.info("TOTAL TRADES : "+backTestingOutputDTO.getTotalTrades());
+			LOG.info("WINNING TRADES : "+backTestingOutputDTO.getTotalWinnigTrades());
+			LOG.info("LOOSING TRADES : "+backTestingOutputDTO.getTotalLoosingTrades());
+			LOG.info("WIN PERCENTAGE : "+backTestingOutputDTO.getWinPercentage());
+			LOG.info("TOTAL PROFIT LOSS : "+backTestingOutputDTO.getTotalProfitLoss());
 		}
-		LOG.info("TOTAL PROFIT LOSS : "+profitLoss);
-		//BackTestingOutputDTO backTestingOutputDTO = DataUtil.getBackTestingResults(listTradeDTO);
+		
 	}
 	
 	/**
@@ -62,8 +63,16 @@ public class BreakoutStrategyBacktestingService {
 	 */
 	public static List<String> getWatchList(){
 		List<String> symbolList = new ArrayList<String>();
-		symbolList.add("VEDL");
 		symbolList.add("SBIN");
+		symbolList.add("HDFCBANK");
+		symbolList.add("VEDL");
+		symbolList.add("HINDALCO");
+		symbolList.add("MARUTI");
+		symbolList.add("TATAMOTORS");
+		symbolList.add("TCS");
+		symbolList.add("INFY");
+		symbolList.add("SUNPHARMA");
+		symbolList.add("LUPIN");
 		return symbolList;
 	}
 }

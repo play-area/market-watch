@@ -8,6 +8,7 @@ public class TradeDTO {
 	Double exitPrice;
 	Double expectedStopLoss;
 	Double expectedTarget;
+	Double riskSize;
 	CandleDTO entryCandle;
 	Integer size;
 	Date startTime;
@@ -15,6 +16,7 @@ public class TradeDTO {
 	String status;
 	String tradeType;
 	Double profitLoss;
+	
 	
 	public Double getEntryPrice() {
 		return entryPrice;
@@ -39,6 +41,12 @@ public class TradeDTO {
 	}
 	public void setExpectedTarget(Double expectedTarget) {
 		this.expectedTarget = expectedTarget;
+	}
+	public Double getRiskSize() {
+		return riskSize;
+	}
+	public void setRiskSize(Double riskSize) {
+		this.riskSize = riskSize;
 	}
 	public CandleDTO getEntryCandle() {
 		return entryCandle;
@@ -82,5 +90,4 @@ public class TradeDTO {
 	public void setProfitLoss(Double profitLoss) {
 		this.profitLoss = profitLoss;
 	}
-
 }

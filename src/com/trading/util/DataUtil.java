@@ -53,15 +53,42 @@ public class DataUtil {
 	
 	public static BackTestingOutputDTO getBackTestingResults(List<TradeDTO> tradeDTOList) {
 		BackTestingOutputDTO backTestingOutputDTO = new BackTestingOutputDTO();
+		double profitLoss = 0;
+		double totalWinSize =0;
+		double totalLossSize = 0;
+		int totalTrades = 0;
+		int winners = 0;
+		int loosers = 0;
+		for(TradeDTO tradeDTO : tradeDTOList) {
+			if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG) && tradeDTO.getStatus().equalsIgnoreCase(ApplicationConstants.CLOSED)) {
+				totalTrades = totalTrades+1;
+				profitLoss = profitLoss + 3000*(tradeDTO.getExitPrice()- tradeDTO.getEntryPrice());
+				if(tradeDTO.getEntryPrice()<tradeDTO.getExitPrice()) {
+					winners = winners+1;
+					totalWinSize = totalWinSize+3000*(tradeDTO.getExitPrice()- tradeDTO.getEntryPrice());
+				}else {
+					loosers = loosers +1;
+					totalLossSize = totalLossSize+3000*(tradeDTO.getExitPrice()-tradeDTO.getEntryPrice());
+				}
+			}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)  && tradeDTO.getStatus().equalsIgnoreCase(ApplicationConstants.CLOSED)) {
+				totalTrades = totalTrades+1;
+				profitLoss = profitLoss + 3000*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice());
+				if(tradeDTO.getEntryPrice()>tradeDTO.getExitPrice()) {
+					winners = winners+1;
+					totalWinSize = totalWinSize+3000*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice());
+				}else {
+					loosers = loosers +1;
+					totalLossSize = totalLossSize+3000*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice());
+				}
+			}
+		}
 		
-		
-//		backTestingOutputDTO.setTotalTrades(totalTrades);
-//		backTestingOutputDTO.setTotalWinnigTrades(totalWinnigTrades);
-//		backTestingOutputDTO.setTotalLoosingTrades(totalLoosingTrades);
-//		backTestingOutputDTO.setWinPercentage(winPercentage);
-		
-		return null;
-		
+		backTestingOutputDTO.setTotalTrades(totalTrades);
+		backTestingOutputDTO.setTotalWinnigTrades(winners);
+		backTestingOutputDTO.setTotalLoosingTrades(loosers);
+		backTestingOutputDTO.setWinPercentage((double)(winners*100/totalTrades));
+		backTestingOutputDTO.setTotalProfitLoss(profitLoss);
+		return backTestingOutputDTO;
 	}
 
 }

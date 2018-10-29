@@ -42,8 +42,16 @@ public class QuandlDataService {
 	 */
 	public static List<String> getWatchList(){
 		List<String> symbolList = new ArrayList<String>();
-		symbolList.add("VEDL");
 		symbolList.add("SBIN");
+		symbolList.add("HDFCBANK");
+		symbolList.add("VEDL");
+		symbolList.add("HINDALCO");
+		symbolList.add("MARUTI");
+		symbolList.add("TATAMOTORS");
+		symbolList.add("TCS");
+		symbolList.add("INFY");
+		symbolList.add("SUNPHARMA");
+		symbolList.add("LUPIN");
 		return symbolList;
 	}
 
