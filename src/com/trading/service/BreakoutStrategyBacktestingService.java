@@ -12,6 +12,7 @@ import com.trading.constants.ApplicationConstants;
 import com.trading.constants.DatabaseConstants;
 import com.trading.constants.ExitStrategy;
 import com.trading.constants.PositionSizingStrategy;
+import com.trading.constants.StopLossStrategy;
 import com.trading.dao.ManageDataDAO;
 import com.trading.model.BackTestingOutputDTO;
 import com.trading.model.CandleDTO;
@@ -40,7 +41,7 @@ public class BreakoutStrategyBacktestingService {
 				}
 			}
 		}
-			List<TradeDTO> listTradeDTO = breakoutStrategy.executeBreakoutStrategy(candleList.get(0), 20, 50, 1.5, 0.3, new BigDecimal(1.5), ExitStrategy.RiskRewardOneTwo,PositionSizingStrategy.RiskThreePercentOfAccount, 500000);
+			List<TradeDTO> listTradeDTO = breakoutStrategy.executeBreakoutStrategy(candleList.get(0), 20, 50, 1.5, 0.3, new BigDecimal(1.5), ExitStrategy.RiskRewardOneTwo,PositionSizingStrategy.RiskThreePercentOfAccount, StopLossStrategy.beyondEntryCandle ,500000);
 			LOG.info("######################### The following trades were taken ##############################");
 			for(TradeDTO tradeDTO : listTradeDTO) {
 				LOG.info("SYMBOL : "+tradeDTO.getEntryCandle().getSymbol()+" TRADE TYPE "+tradeDTO.getTradeType()+" SIZE : "+tradeDTO.getSize()+" START TIME : "+ tradeDTO.getStartTime()+" ENTRY PRICE "+ tradeDTO.getEntryPrice()+" EXIT PRICE "+tradeDTO.getExitPrice()+" END TIME :"+tradeDTO.getEndTime());
@@ -67,6 +68,15 @@ public class BreakoutStrategyBacktestingService {
 	public static List<String> getWatchList(){
 		List<String> symbolList = new ArrayList<String>();
 		symbolList.add("SBIN");
+		symbolList.add("HDFCBANK");
+		symbolList.add("VEDL");
+		symbolList.add("HINDALCO");
+		symbolList.add("MARUTI");
+		symbolList.add("TATAMOTORS");
+		symbolList.add("TCS");
+		symbolList.add("INFY");
+		symbolList.add("SUNPHARMA");
+		symbolList.add("LUPIN");
 		return symbolList;
 	}
 }

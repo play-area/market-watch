@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import com.trading.constants.ApplicationConstants;
 import com.trading.constants.ExitStrategy;
 import com.trading.constants.PositionSizingStrategy;
+import com.trading.constants.StopLossStrategy;
 import com.trading.model.CandleDTO;
 import com.trading.model.TradeDTO;
 import com.trading.strategy.helpers.ExitStrategies;
@@ -33,10 +34,11 @@ public class BreakoutStrategy {
 	 * @param volumeMultiple Volume multiple of the candle relative to the average volume of the last n candle(s).
 	 * @param exitStrategy The criteria on which exit will take place.
 	 * @param positionSizingStrategy The position sizing Strategy used.
+	 * @param stopLossStrategy The Stop Loss Strategy implemented.
 	 * @param tradeSize The size in Rupees of individual trades.
 	 * @return List<TradeDTO> Trades Taken
 	 */
-	public List<TradeDTO> executeBreakoutStrategy(List<CandleDTO>candleDTOList,int lookbackPeriod, int durationOfAverage , double candleHightMultiple,double candleWickMultiple,BigDecimal volumeMultiple,ExitStrategy exitStrategy, PositionSizingStrategy positionSizingStrategy ,Integer tradingCapital){
+	public List<TradeDTO> executeBreakoutStrategy(List<CandleDTO>candleDTOList,int lookbackPeriod, int durationOfAverage , double candleHightMultiple,double candleWickMultiple,BigDecimal volumeMultiple,ExitStrategy exitStrategy, PositionSizingStrategy positionSizingStrategy , StopLossStrategy stopLossStrategy ,Integer tradingCapital){
 		List<TradeDTO> tradeDTOList	=	new ArrayList<TradeDTO>();
 		CandleDTO currentCandle = new CandleDTO();
 		double smallestTickSize = 0.05;
