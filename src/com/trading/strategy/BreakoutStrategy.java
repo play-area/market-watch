@@ -12,8 +12,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.trading.constants.ApplicationConstants;
 import com.trading.constants.ExitStrategy;
+import com.trading.constants.PositionSizingStrategy;
 import com.trading.model.CandleDTO;
 import com.trading.model.TradeDTO;
+import com.trading.strategy.helpers.ExitStrategies;
+import com.trading.strategy.helpers.PositionSizingStrategies;
 import com.trading.util.IndicatorsUtil;
 
 public class BreakoutStrategy {
@@ -29,10 +32,11 @@ public class BreakoutStrategy {
 	 * @param candleWickMultiple Length of the Directional Wick relative to the height of the candle.
 	 * @param volumeMultiple Volume multiple of the candle relative to the average volume of the last n candle(s).
 	 * @param exitStrategy The criteria on which exit will take place.
+	 * @param positionSizingStrategy The position sizing Strategy used.
 	 * @param tradeSize The size in Rupees of individual trades.
 	 * @return List<TradeDTO> Trades Taken
 	 */
-	public List<TradeDTO> executeBreakoutStrategy(List<CandleDTO>candleDTOList,int lookbackPeriod, int durationOfAverage , double candleHightMultiple,double candleWickMultiple,BigDecimal volumeMultiple,ExitStrategy exitStrategy, double tradeSize){
+	public List<TradeDTO> executeBreakoutStrategy(List<CandleDTO>candleDTOList,int lookbackPeriod, int durationOfAverage , double candleHightMultiple,double candleWickMultiple,BigDecimal volumeMultiple,ExitStrategy exitStrategy, PositionSizingStrategy positionSizingStrategy ,Integer tradingCapital){
 		List<TradeDTO> tradeDTOList	=	new ArrayList<TradeDTO>();
 		CandleDTO currentCandle = new CandleDTO();
 		double smallestTickSize = 0.05;
@@ -57,7 +61,8 @@ public class BreakoutStrategy {
 								tradeDTO.setExpectedStopLoss(currentCandle.getHigh()+smallestTickSize*2);
 								tradeDTO.setRiskSize(tradeDTO.getExpectedStopLoss()-tradeDTO.getEntryPrice());
 							}
-							tradeDTO = getExitParmaters(tradeDTO,currentCandle, exitStrategy);
+							tradeDTO = ExitStrategies.getExitStrategyParmaters(tradeDTO,currentCandle, exitStrategy);
+							tradeDTO.setSize(PositionSizingStrategies.getTradeSize(tradeDTO, positionSizingStrategy , tradingCapital) );
 							tradeDTOList.add(tradeDTO);
 						}
 					}else if(CollectionUtils.isNotEmpty(tradeDTOList) && tradeDTOList.get(tradeDTOList.size()-1).getStatus().equalsIgnoreCase(ApplicationConstants.OPENED)) {
@@ -90,13 +95,20 @@ public class BreakoutStrategy {
 		double averageCandleHeight = IndicatorsUtil.calcualteAverageCandleHeight(durationOfAverage, candleDTOList,index);
 		double high = IndicatorsUtil.getHighLow(lookbackPeriod, candleDTOList, ApplicationConstants.HIGHEST,index);
 		double low  = IndicatorsUtil.getHighLow(lookbackPeriod, candleDTOList, ApplicationConstants.LOWEST,index);
-		if(candleDTO.getVolume().compareTo(averageVolume.multiply(volumeMultiple))==1 && Math.abs(candleDTO.getHigh()-candleDTO.getLow()) > candleHightMultiple*averageCandleHeight) {
+		double candleWick = 0;
+		if(candleDTO.getVolume().compareTo(averageVolume.multiply(volumeMultiple))==1 && Math.abs(candleDTO.getHigh()-candleDTO.getLow()) > candleHightMultiple*averageCandleHeight ) {
 			if(candleDTO.getClose()>high && candleDTO.getClose() > candleDTO.getOpen()) {
-				entryDetails.put(ApplicationConstants.CANDLE,candleDTO);
-				entryDetails.put(ApplicationConstants.TRADE_TYPE,ApplicationConstants.LONG);
+				candleWick =candleDTO.getHigh()-candleDTO.getClose();
+				if(candleWick<=0.3*(candleDTO.getHigh()-candleDTO.getLow())) {
+					entryDetails.put(ApplicationConstants.CANDLE,candleDTO);
+					entryDetails.put(ApplicationConstants.TRADE_TYPE,ApplicationConstants.LONG);
+				}
 			}else if(candleDTO.getClose()<low && candleDTO.getClose() < candleDTO.getOpen()) {
-				entryDetails.put(ApplicationConstants.CANDLE,candleDTO);
-				entryDetails.put(ApplicationConstants.TRADE_TYPE,ApplicationConstants.SHORT);
+				candleWick =candleDTO.getClose()-candleDTO.getLow();
+				if(candleWick<=0.3*(candleDTO.getHigh()-candleDTO.getLow())) {
+					entryDetails.put(ApplicationConstants.CANDLE,candleDTO);
+					entryDetails.put(ApplicationConstants.TRADE_TYPE,ApplicationConstants.SHORT);
+				}
 			}
 		}
 		return entryDetails;
@@ -136,60 +148,11 @@ public class BreakoutStrategy {
 		}
 		// If trade is still open then recalculating the Stop Loss and the Target based on the choosen exit strategy
 		if(tradeDTO.getStatus().equalsIgnoreCase(ApplicationConstants.OPENED)){
-			getExitParmaters(tradeDTO,currentCandle, exitStrategy);
+			ExitStrategies.getExitStrategyParmaters(tradeDTO,currentCandle, exitStrategy);
 		}
 		return tradeDTO;
 	  }
 
 	
-	/**
-	 * Function to get Exit Parameters of a Trade
-	 * @param tradeDTO
-	 * @param currentCandle
-	 * @param exitStrategy
-	 * @return TradeDTO
-	 */
-	public TradeDTO getExitParmaters(TradeDTO tradeDTO,CandleDTO currentCandle, ExitStrategy exitStrategy) {
-		double risk = tradeDTO.getRiskSize();
-		switch(exitStrategy) {
-			case RiskRewardOneOne :
-				if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG)) {
-					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() + risk);
-				}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)) {
-					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() - risk);
-				}
-				break;
-			case RiskRewardOneTwo :
-				if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG)) {
-					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() + 2*risk);
-				}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)) {
-					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() - 2*risk);
-				}
-				break;
-			case RiskRewardOneTwoWithTrailing :
-				if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG)) {
-					if(currentCandle.getHigh()> (tradeDTO.getEntryPrice() + risk)) {
-						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice());
-					}
-					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() + 2*risk);
-				}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)) {
-					if(currentCandle.getLow()< (tradeDTO.getEntryPrice() - risk)) {
-						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice());
-					}
-					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() - 2*risk);
-				}
-				break;
-			case RiskRewardOneThree :
-				if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG)) {
-					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() + 3*risk);
-				}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)) {
-					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() - 3*risk);
-				}
-				break;
-			default:
-				LOG.info("Please select an appropriate Exit Strategy, "+exitStrategy+" is not present");
-				break;
-		}
-		return tradeDTO;
-	}
+	
 }
