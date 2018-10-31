@@ -5,6 +5,7 @@ public class ApplicationConstants {
 	//public static final String WATCHLIST_COLUMN_SYMBOL = "symbol";
 	
 	public static final String DATE_FORMAT_YYYY_MM_DD = "yyyy-MM-dd";
+	public static final String DATE_FORMAT_DD_MM_YYYY = "dd-MM-yy";
 	
 	public static final String TRADE_TYPE = "TRADE_TYPE";
 	public static final String LONG = "LONG";

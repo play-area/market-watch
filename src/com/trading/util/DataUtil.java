@@ -66,46 +66,48 @@ public class DataUtil {
         int loosers = 0;
         List<Map<Object,Object>> maxDrawDownList = new ArrayList<Map<Object,Object>>();
         Map<String,String> tradeOutCome = new HashMap<String,String>();
-		for(TradeDTO tradeDTO : tradeDTOList) {
-			if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG) && tradeDTO.getStatus().equalsIgnoreCase(ApplicationConstants.CLOSED)) {
-				totalTrades = totalTrades+1;
-		        profitLoss = profitLoss + tradeDTO.getSize()*(tradeDTO.getExitPrice()- tradeDTO.getEntryPrice());
-		        if(tradeDTO.getEntryPrice()<tradeDTO.getExitPrice()) {
-		        	winners = winners+1;
-		        	totalWinSize = totalWinSize+tradeDTO.getSize()*(tradeDTO.getExitPrice()- tradeDTO.getEntryPrice());
-		        	tradeOutCome.put(ApplicationConstants.CURRENT,ApplicationConstants.WINNER);
-		        }else {
-		            loosers = loosers +1;
-		            totalLossSize = totalLossSize+tradeDTO.getSize()*(tradeDTO.getExitPrice()-tradeDTO.getEntryPrice());
-		            tradeOutCome.put(ApplicationConstants.CURRENT,ApplicationConstants.LOOSER);
-                    maxDrawDownList = getMaxDrawDownList(tradeDTO.getSize()*(tradeDTO.getExitPrice()-tradeDTO.getEntryPrice()),tradeOutCome,maxDrawDownList);
-                 }
-			}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)  && tradeDTO.getStatus().equalsIgnoreCase(ApplicationConstants.CLOSED)) {
-                totalTrades = totalTrades+1;
-                profitLoss = profitLoss + tradeDTO.getSize()*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice());
-                if(tradeDTO.getEntryPrice()>tradeDTO.getExitPrice()) {
-                	winners = winners+1;
-                    totalWinSize = totalWinSize+tradeDTO.getSize()*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice());
-                    tradeOutCome.put(ApplicationConstants.CURRENT,ApplicationConstants.WINNER);
-                }else {
-                	loosers = loosers +1;
-                	totalLossSize = totalLossSize+tradeDTO.getSize()*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice());
-                	tradeOutCome.put(ApplicationConstants.CURRENT,ApplicationConstants.LOOSER);
-                    maxDrawDownList = getMaxDrawDownList(tradeDTO.getSize()*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice()),tradeOutCome,maxDrawDownList);
-                 }
-			}
-			tradeOutCome.put(ApplicationConstants.PREVIOUS,tradeOutCome.get(ApplicationConstants.CURRENT));
+        if(CollectionUtils.isNotEmpty(tradeDTOList)) {
+        	for(TradeDTO tradeDTO : tradeDTOList) {
+    			if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG) && tradeDTO.getStatus().equalsIgnoreCase(ApplicationConstants.CLOSED)) {
+    				totalTrades = totalTrades+1;
+    		        profitLoss = profitLoss + tradeDTO.getSize()*(tradeDTO.getExitPrice()- tradeDTO.getEntryPrice());
+    		        if(tradeDTO.getEntryPrice()<tradeDTO.getExitPrice()) {
+    		        	winners = winners+1;
+    		        	totalWinSize = totalWinSize+tradeDTO.getSize()*(tradeDTO.getExitPrice()- tradeDTO.getEntryPrice());
+    		        	tradeOutCome.put(ApplicationConstants.CURRENT,ApplicationConstants.WINNER);
+    		        }else {
+    		            loosers = loosers +1;
+    		            totalLossSize = totalLossSize+tradeDTO.getSize()*(tradeDTO.getExitPrice()-tradeDTO.getEntryPrice());
+    		            tradeOutCome.put(ApplicationConstants.CURRENT,ApplicationConstants.LOOSER);
+                        maxDrawDownList = getMaxDrawDownList(tradeDTO.getSize()*(tradeDTO.getExitPrice()-tradeDTO.getEntryPrice()),tradeOutCome,maxDrawDownList);
+                     }
+    			}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)  && tradeDTO.getStatus().equalsIgnoreCase(ApplicationConstants.CLOSED)) {
+                    totalTrades = totalTrades+1;
+                    profitLoss = profitLoss + tradeDTO.getSize()*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice());
+                    if(tradeDTO.getEntryPrice()>tradeDTO.getExitPrice()) {
+                    	winners = winners+1;
+                        totalWinSize = totalWinSize+tradeDTO.getSize()*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice());
+                        tradeOutCome.put(ApplicationConstants.CURRENT,ApplicationConstants.WINNER);
+                    }else {
+                    	loosers = loosers +1;
+                    	totalLossSize = totalLossSize+tradeDTO.getSize()*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice());
+                    	tradeOutCome.put(ApplicationConstants.CURRENT,ApplicationConstants.LOOSER);
+                        maxDrawDownList = getMaxDrawDownList(tradeDTO.getSize()*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice()),tradeOutCome,maxDrawDownList);
+                     }
+    			}
+    			tradeOutCome.put(ApplicationConstants.PREVIOUS,tradeOutCome.get(ApplicationConstants.CURRENT));
+            }
+    		Collections.sort(maxDrawDownList,mapComparator);
+    		backTestingOutputDTO.setTotalTrades(totalTrades);
+            backTestingOutputDTO.setTotalWinnigTrades(winners);
+            backTestingOutputDTO.setTotalLoosingTrades(loosers);
+    		backTestingOutputDTO.setWinPercentage((double)(winners*100/totalTrades));
+    		backTestingOutputDTO.setAverageWinSize(totalWinSize/winners);
+    		backTestingOutputDTO.setAverageLossSize(totalLossSize/loosers);
+    		backTestingOutputDTO.setTotalProfitLoss(profitLoss);
+    		backTestingOutputDTO.setMaxDrawDown((Double)maxDrawDownList.get(0).get("loosingStreakValue"));
+    		backTestingOutputDTO.setLoosingStreakSize((Integer)maxDrawDownList.get(0).get("loosingStreakSize"));
         }
-		Collections.sort(maxDrawDownList,mapComparator);
-		backTestingOutputDTO.setTotalTrades(totalTrades);
-        backTestingOutputDTO.setTotalWinnigTrades(winners);
-        backTestingOutputDTO.setTotalLoosingTrades(loosers);
-		backTestingOutputDTO.setWinPercentage((double)(winners*100/totalTrades));
-		backTestingOutputDTO.setAverageWinSize(totalWinSize/winners);
-		backTestingOutputDTO.setAverageLossSize(totalLossSize/loosers);
-		backTestingOutputDTO.setTotalProfitLoss(profitLoss);
-		backTestingOutputDTO.setMaxDrawDown((Double)maxDrawDownList.get(0).get("loosingStreakValue"));
-		backTestingOutputDTO.setLoosingStreakSize((Integer)maxDrawDownList.get(0).get("loosingStreakSize"));
 		return backTestingOutputDTO;
 	}
 
