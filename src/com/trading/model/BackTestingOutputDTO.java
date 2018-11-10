@@ -16,7 +16,7 @@ public class BackTestingOutputDTO {
 	Integer loosingStreakSize;
 	Double maxDrawDown;
 	Integer averageTradeDuration;
-	Double expectancy;
+	String expectancy;
 	
 	public Double getInitialCapital() {
 		return initialCapital;
@@ -102,11 +102,10 @@ public class BackTestingOutputDTO {
 	public void setAverageTradeDuration(Integer averageTradeDuration) {
 		this.averageTradeDuration = averageTradeDuration;
 	}
-	public Double getExpectancy() {
+	public String getExpectancy() {
 		return expectancy;
 	}
-	public void setExpectancy(Double expectancy) {
+	public void setExpectancy(String expectancy) {
 		this.expectancy = expectancy;
 	}
-	
 }

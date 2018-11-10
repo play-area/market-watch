@@ -12,7 +12,6 @@ public class ExitStrategies {
 	
 	private static Logger LOG = LogManager.getLogger();
 	
-	
 	/**
 	 * Function to get Exit Parameters of a Trade
 	 * @param tradeDTO
@@ -37,7 +36,7 @@ public class ExitStrategies {
 					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() - 2*risk);
 				}
 				break;
-			case RiskRewardOneTwoWithTrailing :
+			case RiskRewardOneTwoWithTrailingAtOneR :
 				if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG)) {
 					if(currentCandle.getHigh()> (tradeDTO.getEntryPrice() + risk)) {
 						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice());
@@ -50,10 +49,68 @@ public class ExitStrategies {
 					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() - 2*risk);
 				}
 				break;
+			case RiskRewardOneTwoWithTrailingAtOneAndHalfR :
+				if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG)) {
+					if(currentCandle.getHigh()> (tradeDTO.getEntryPrice() + 1.5*risk)) {
+						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice());
+					}
+					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() + 2*risk);
+				}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)) {
+					if(currentCandle.getLow()< (tradeDTO.getEntryPrice() - 1.5*risk)) {
+						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice());
+					}
+					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() - 2*risk);
+				}
+				break;
 			case RiskRewardOneThree :
 				if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG)) {
 					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() + 3*risk);
 				}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)) {
+					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() - 3*risk);
+				}
+				break;
+			case RiskRewardOneThreeWithTrailingAfterEveryOneR :
+				if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG)) {
+					if(currentCandle.getHigh()> (tradeDTO.getEntryPrice() + risk) && tradeDTO.getExpectedStopLoss()<tradeDTO.getEntryPrice()) {
+						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice());
+					}
+					if(currentCandle.getHigh() > (tradeDTO.getEntryPrice() + 2*risk)){
+						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice() + risk);
+					}
+					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() + 3*risk);
+				}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)) {
+					if(currentCandle.getLow() < (tradeDTO.getEntryPrice() - risk) && tradeDTO.getExpectedStopLoss()>tradeDTO.getEntryPrice()) {
+						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice());
+					}
+					if(currentCandle.getLow() < (tradeDTO.getEntryPrice() - 2*risk)){
+						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice() - risk);
+					}
+					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() - 3*risk);
+				}
+				break;
+			case RiskRewardOneThreeWithTrailingAtOneAndHalfR  :
+				if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG)) {
+					if(currentCandle.getHigh()> (tradeDTO.getEntryPrice() + 1.5*risk)) {
+						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice());
+					}
+					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() + 3*risk);
+				}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)) {
+					if(currentCandle.getHigh()> (tradeDTO.getEntryPrice() + 1.5*risk)) {
+						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice());
+					}
+					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() - 3*risk);
+				}
+				break;
+			case RiskRewardOneThreeWithTrailingAtTwoR  :
+				if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG)) {
+					if(currentCandle.getHigh()> (tradeDTO.getEntryPrice() + 2*risk)) {
+						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice());
+					}
+					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() + 3*risk);
+				}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)) {
+					if(currentCandle.getHigh()> (tradeDTO.getEntryPrice() + 2*risk)) {
+						tradeDTO.setExpectedStopLoss(tradeDTO.getEntryPrice());
+					}
 					tradeDTO.setExpectedTarget(tradeDTO.getEntryPrice() - 3*risk);
 				}
 				break;

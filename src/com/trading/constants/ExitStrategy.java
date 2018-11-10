@@ -4,9 +4,12 @@ public enum ExitStrategy {
 	
 	   RiskRewardOneOne,
 	   RiskRewardOneTwo,
-	   RiskRewardOneTwoWithTrailing,
+	   RiskRewardOneTwoWithTrailingAtOneR,
+	   RiskRewardOneTwoWithTrailingAtOneAndHalfR,
 	   RiskRewardOneThree,
-	   RiskRewardOneThreeWithTrailing,
+	   RiskRewardOneThreeWithTrailingAfterEveryOneR,
+	   RiskRewardOneThreeWithTrailingAtOneAndHalfR,
+	   RiskRewardOneThreeWithTrailingAtTwoR,
 	   OnlyTrailing,
 	   timeBased,
 }

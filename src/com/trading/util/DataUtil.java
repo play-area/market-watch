@@ -1,11 +1,13 @@
 package com.trading.util;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +68,7 @@ public class DataUtil {
         int loosers = 0;
         List<Map<Object,Object>> maxDrawDownList = new ArrayList<Map<Object,Object>>();
         Map<String,String> tradeOutCome = new HashMap<String,String>();
+        DecimalFormat decimalFormatter = new DecimalFormat("##.00");
         if(CollectionUtils.isNotEmpty(tradeDTOList)) {
         	for(TradeDTO tradeDTO : tradeDTOList) {
     			if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG) && tradeDTO.getStatus().equalsIgnoreCase(ApplicationConstants.CLOSED)) {
@@ -75,7 +78,7 @@ public class DataUtil {
     		        	winners = winners+1;
     		        	totalWinSize = totalWinSize+tradeDTO.getSize()*(tradeDTO.getExitPrice()- tradeDTO.getEntryPrice());
     		        	tradeOutCome.put(ApplicationConstants.CURRENT,ApplicationConstants.WINNER);
-    		        }else {
+    		        }else if(tradeDTO.getEntryPrice()>tradeDTO.getExitPrice()) {
     		            loosers = loosers +1;
     		            totalLossSize = totalLossSize+tradeDTO.getSize()*(tradeDTO.getExitPrice()-tradeDTO.getEntryPrice());
     		            tradeOutCome.put(ApplicationConstants.CURRENT,ApplicationConstants.LOOSER);
@@ -88,7 +91,7 @@ public class DataUtil {
                     	winners = winners+1;
                         totalWinSize = totalWinSize+tradeDTO.getSize()*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice());
                         tradeOutCome.put(ApplicationConstants.CURRENT,ApplicationConstants.WINNER);
-                    }else {
+                    }else if (tradeDTO.getEntryPrice()<tradeDTO.getExitPrice()) {
                     	loosers = loosers +1;
                     	totalLossSize = totalLossSize+tradeDTO.getSize()*(tradeDTO.getEntryPrice()-tradeDTO.getExitPrice());
                     	tradeOutCome.put(ApplicationConstants.CURRENT,ApplicationConstants.LOOSER);
@@ -107,6 +110,7 @@ public class DataUtil {
     		backTestingOutputDTO.setTotalProfitLoss(profitLoss);
     		backTestingOutputDTO.setMaxDrawDown((Double)maxDrawDownList.get(0).get("loosingStreakValue"));
     		backTestingOutputDTO.setLoosingStreakSize((Integer)maxDrawDownList.get(0).get("loosingStreakSize"));
+    		backTestingOutputDTO.setExpectancy(decimalFormatter.format(profitLoss/(totalTrades*Math.abs(backTestingOutputDTO.getAverageLossSize())))+ApplicationConstants.RISK_ABBREVIATION);
         }
 		return backTestingOutputDTO;
 	}
@@ -141,7 +145,18 @@ public class DataUtil {
 	    }
 	};
 
-
+	/**
+	 * Function to log the details of Trades
+	 * @param listTradeDTO
+	 */
+	public static void getTradeDetails(List<TradeDTO> listTradeDTO){
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(ApplicationConstants.DATE_FORMAT_DD_MM_YYYY);
+		DecimalFormat decimalFormatter = new DecimalFormat("##.00");
+		for(TradeDTO tradeDTO : listTradeDTO) {
+			String profitLoss = tradeDTO.getExitPrice()!=null?(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG)?1:-1)*tradeDTO.getSize()*(tradeDTO.getExitPrice()-tradeDTO.getEntryPrice())+" Rupees":"NA";
+			LOG.info("\t"+tradeDTO.getEntryCandle().getSymbol()+"\t"+tradeDTO.getTradeType()+"\t"+tradeDTO.getSize()+" Shares\tENTRY PRICE : "+decimalFormatter.format(tradeDTO.getEntryPrice())+"\tEXIT PRICE : "+decimalFormatter.format(tradeDTO.getExitPrice()!=null?tradeDTO.getExitPrice():0.0)+"\tSTART TIME : "+dateFormatter.format(tradeDTO.getStartTime())+"\tEND TIME : "+dateFormatter.format(tradeDTO.getEndTime()!=null?tradeDTO.getEndTime():new Date())+"\t P&L : "+profitLoss);
+		}
+	}
 
 
 

@@ -27,6 +27,8 @@ public class ApplicationConstants {
 	public static final String HIGHEST = "HIGHEST";
 	public static final String LOWEST = "LOWEST";
 	
+	public static final String RISK_ABBREVIATION = "R";
+	
 	
 	
 	

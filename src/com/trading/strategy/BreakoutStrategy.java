@@ -1,6 +1,8 @@
 package com.trading.strategy;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +20,7 @@ import com.trading.model.CandleDTO;
 import com.trading.model.TradeDTO;
 import com.trading.strategy.helpers.ExitStrategies;
 import com.trading.strategy.helpers.PositionSizingStrategies;
+import com.trading.strategy.helpers.StopLossStrategies;
 import com.trading.util.IndicatorsUtil;
 
 public class BreakoutStrategy {
@@ -41,7 +44,6 @@ public class BreakoutStrategy {
 	public List<TradeDTO> executeBreakoutStrategy(List<CandleDTO>candleDTOList,int lookbackPeriod, int durationOfAverage , double candleHightMultiple,double candleWickMultiple,BigDecimal volumeMultiple,ExitStrategy exitStrategy, PositionSizingStrategy positionSizingStrategy , StopLossStrategy stopLossStrategy ,Integer tradingCapital){
 		List<TradeDTO> tradeDTOList	=	new ArrayList<TradeDTO>();
 		CandleDTO currentCandle = new CandleDTO();
-		double smallestTickSize = 0.05;
 		if(CollectionUtils.isNotEmpty(candleDTOList)) {
 			for(int i=0;i<candleDTOList.size();i++) {
 				currentCandle = candleDTOList.get(i);
@@ -50,19 +52,15 @@ public class BreakoutStrategy {
 					if(CollectionUtils.isEmpty(tradeDTOList) || (CollectionUtils.isNotEmpty(tradeDTOList) && tradeDTOList.get(tradeDTOList.size()-1).getStatus().equalsIgnoreCase(ApplicationConstants.CLOSED))) {
 						Map entryMap = getEntryCandle(candleDTOList,currentCandle,i, lookbackPeriod, durationOfAverage,  candleHightMultiple, candleWickMultiple, volumeMultiple);
 						if(entryMap.containsKey(ApplicationConstants.CANDLE)){
+							double averageCandleHeight = IndicatorsUtil.calcualteAverageCandleHeight(durationOfAverage, candleDTOList,i);
 							TradeDTO tradeDTO = new TradeDTO();
 							tradeDTO.setEntryCandle(currentCandle);
 							tradeDTO.setEntryPrice(currentCandle.getClose());
 							tradeDTO.setStartTime(currentCandle.getTime());
 							tradeDTO.setStatus(ApplicationConstants.OPENED);
 							tradeDTO.setTradeType((String)entryMap.get(ApplicationConstants.TRADE_TYPE));
-							if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.LONG)){
-								tradeDTO.setExpectedStopLoss(currentCandle.getLow()-smallestTickSize*2);
-								tradeDTO.setRiskSize(tradeDTO.getEntryPrice()-tradeDTO.getExpectedStopLoss());
-							}else if(tradeDTO.getTradeType().equalsIgnoreCase(ApplicationConstants.SHORT)){
-								tradeDTO.setExpectedStopLoss(currentCandle.getHigh()+smallestTickSize*2);
-								tradeDTO.setRiskSize(tradeDTO.getExpectedStopLoss()-tradeDTO.getEntryPrice());
-							}
+							tradeDTO.setExpectedStopLoss(StopLossStrategies.getStopLoss(tradeDTO, currentCandle,averageCandleHeight, stopLossStrategy));
+							tradeDTO.setRiskSize(Math.abs(tradeDTO.getEntryPrice()-tradeDTO.getExpectedStopLoss()));
 							tradeDTO = ExitStrategies.getExitStrategyParmaters(tradeDTO,currentCandle, exitStrategy);
 							tradeDTO.setSize(PositionSizingStrategies.getTradeSize(tradeDTO, positionSizingStrategy , tradingCapital) );
 							tradeDTOList.add(tradeDTO);
@@ -98,18 +96,35 @@ public class BreakoutStrategy {
 		double high = IndicatorsUtil.getHighLow(lookbackPeriod, candleDTOList, ApplicationConstants.HIGHEST,index);
 		double low  = IndicatorsUtil.getHighLow(lookbackPeriod, candleDTOList, ApplicationConstants.LOWEST,index);
 		double candleWick = 0;
+		SimpleDateFormat dateFormatter = new SimpleDateFormat(ApplicationConstants.DATE_FORMAT_DD_MM_YYYY);
+		DecimalFormat decimalFormatter = new DecimalFormat("##.00");
+		if(dateFormatter.format(candleDTO.getTime()).equalsIgnoreCase("DD-MM-YYYY")){
+			LOG.info("Candle Info for date : "+dateFormatter.format(candleDTO.getTime()));
+			LOG.info("Average Candle Volume : "+averageVolume+" Candle Volume : "+candleDTO.getVolume());
+			LOG.info("Average Candle Height : "+decimalFormatter.format(averageCandleHeight)+" Candle Height : "+decimalFormatter.format(Math.abs(candleDTO.getHigh()-candleDTO.getLow())));
+			LOG.info("Candle Wick Long : "+decimalFormatter.format(candleDTO.getHigh()-candleDTO.getClose())+" Candle Wick Short : "+decimalFormatter.format(candleDTO.getClose()-candleDTO.getLow())+" Candle Height "+decimalFormatter.format(candleDTO.getHigh()-candleDTO.getLow()));
+			LOG.info("Period High : "+high+" Period Low : "+low);
+		}
 		if(candleDTO.getVolume().compareTo(averageVolume.multiply(volumeMultiple))==1 && Math.abs(candleDTO.getHigh()-candleDTO.getLow()) > candleHightMultiple*averageCandleHeight ) {
 			if(candleDTO.getClose()>high && candleDTO.getClose() > candleDTO.getOpen()) {
 				candleWick =candleDTO.getHigh()-candleDTO.getClose();
 				if(candleWick<=0.3*(candleDTO.getHigh()-candleDTO.getLow())) {
 					entryDetails.put(ApplicationConstants.CANDLE,candleDTO);
 					entryDetails.put(ApplicationConstants.TRADE_TYPE,ApplicationConstants.LONG);
+//					LOG.info("Candle Info for date : "+dateFormatter.format(candleDTO.getTime()));
+//					LOG.info("Average Candle Volume : "+averageVolume+" Candle Volume : "+candleDTO.getVolume());
+//					LOG.info("Average Candle Height : "+decimalFormatter.format(averageCandleHeight)+" Candle Height : "+decimalFormatter.format(Math.abs(candleDTO.getHigh()-candleDTO.getLow())));
+//					LOG.info("Candle Wick : "+decimalFormatter.format(candleWick)+" Candle Height "+decimalFormatter.format(candleDTO.getHigh()-candleDTO.getLow()));
 				}
 			}else if(candleDTO.getClose()<low && candleDTO.getClose() < candleDTO.getOpen()) {
 				candleWick =candleDTO.getClose()-candleDTO.getLow();
 				if(candleWick<=0.3*(candleDTO.getHigh()-candleDTO.getLow())) {
 					entryDetails.put(ApplicationConstants.CANDLE,candleDTO);
 					entryDetails.put(ApplicationConstants.TRADE_TYPE,ApplicationConstants.SHORT);
+//					LOG.info("Candle Info for date : "+dateFormatter.format(candleDTO.getTime()));
+//					LOG.info("Average Candle Volume : "+averageVolume+" Candle Volume : "+candleDTO.getVolume());
+//					LOG.info("Average Candle Height : "+decimalFormatter.format(averageCandleHeight)+" Candle Height : "+decimalFormatter.format(Math.abs(candleDTO.getHigh()-candleDTO.getLow())));
+//					LOG.info("Candle Wick : "+decimalFormatter.format(candleWick)+" Candle Height "+decimalFormatter.format(candleDTO.getHigh()-candleDTO.getLow()));
 				}
 			}
 		}

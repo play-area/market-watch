@@ -2,8 +2,16 @@ package com.trading.constants;
 
 public enum StopLossStrategy {
 	
-	beyondEntryCandle,
-	oneTimesATRStop,
-	twoTimesATRStop,
-	threeTimesATRStop,
+	BeyondEntryCandle,
+	OneTimesCandleHeightStop,
+	TwoTimesCandleHeightStop,
+	ThreeTimesCandleHeightStop,
+	FourTimesCandleHeightStop,
+	MaxOfCandleBeyondAndOneTimesCandleHeight,
+	MaxOfCandleBeyondAndOneHalfTimesCandleHeight,
+	MaxOfCandleBeyondAndTwoTimesCandleHeight,
+	MaxOfCandleBeyondAndThreeTimesCandleHeight,
+	OneTimesATRStop,
+	TwoTimesATRStop,
+	ThreeTimesATRStop,
 }
